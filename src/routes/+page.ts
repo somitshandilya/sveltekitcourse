@@ -1,10 +1,11 @@
-// since there's no dynamic data here, we can prerender
-// it so that it gets served as a static asset in production
-// turns app into a SPA
-export const ssr = false
+import type { Post } from '@prisma/client'
 
-// turns app into SSG
-export const prerender = true
+export async function load({ fetch, depends }) {
+  const random = Math.round(Math.random() * 30)
+  const response = await fetch(`api/posts?limit=${random}`)
+  const posts: Post[] = await response.json()
 
-// don't even load the SvelteKit client
-export const csr = false
+  depends('posts')
+
+  return { posts }
+}
